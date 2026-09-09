@@ -47,3 +47,38 @@ python3 -m http.server 8000 --directory dist
 `deploy.py` и `deploy-v2.py` — исторические одноразовые скрипты выпуска с проверками конкретного состояния сервера и контрольных сумм. Это не универсальная команда деплоя; повторно запускать их для новых версий не нужно. Для следующего выпуска следует собрать и проверить новый каталог, затем переключить `current`, сохранив предыдущий выпуск для отката.
 
 Push в GitHub сам по себе не обновляет сайт. Автодеплой не настроен.
+
+## Analytics (2026-09-09)
+
+Production is https://anatolt.ru/t/duo34/. The GitHub baseline was behind the
+live deployment; commit c6023dd preserves the deployed 2391a45 JavaScript/content.
+The current release retains the existing audio files unchanged.
+
+`analytics.js` stores an anonymous browser UUID, pending events and attempt IDs
+under `duo34-analytics-v1`. Starts/finishes cover training lessons and stories;
+error review is excluded. Existing completed IDs are imported once as legacy
+progress with no invented completion date. Delivery retries on reconnect and
+while the page remains open. Clearing browser storage or switching browsers
+creates a different identity. Counts describe browsers, not identifiable people.
+
+`analytics.php` accepts validated bounded JSON POST batches. The private PHP
+helper serializes writes using per-browser file locks and atomic replacement;
+attempt IDs deduplicate repeated completions. No IP, name, user agent or answer
+text is stored by analytics. Ordinary web-server access logs are independent.
+`stats.php` is HTTP Basic protected (username `admin`); the password hash and data
+live outside the document root in
+`/home/tolik/web/anatolt.ru/private/duo34-analytics` on `new`.
+Credentials are in the ignored local `.analytics-access.txt`, never in Git.
+
+The dashboard includes all-time counts and per-browser unique completed lessons
+and stories. The completion percentage uses matched started/finished attempts;
+legacy completions are separate. Analytics is best-effort: closed offline pages,
+blocked requests or cleared storage may lose unsent events.
+
+Deploy only with an approved registry plan. `ops/deploy-analytics.py` is a guarded
+one-time migration from the reviewed baseline and preserves its backup. It adds
+exact PHP-FPM routes, enforces HTTPS for Duo34, then uploads only analytics files
+and app.js. For subsequent releases inspect current state first. `npm run build`
+builds the browser/PHP public files; deploy `server/common.php` and catalog to the
+private directory separately. Existing `deploy*.py` scripts target legacy de
+hosting and must not be used for the new production host.

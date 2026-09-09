@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+header('Cache-Control: no-store');header('X-Content-Type-Options: nosniff');header('X-Frame-Options: DENY');header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
+require '/home/tolik/web/anatolt.ru/private/duo34-analytics/common.php';
+$config=json_decode(file_get_contents(analytics_dir().'/config.json'),true);
+if(($_SERVER['PHP_AUTH_USER']??'')!=='admin'||!password_verify($_SERVER['PHP_AUTH_PW']??'',$config['password_hash'])){
+ header('WWW-Authenticate: Basic realm="Duo34 analytics", charset="UTF-8"');http_response_code(401);exit('Требуется пароль администратора.');
+}
+$s=summary();function h($x){return htmlspecialchars((string)$x,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
+$allFinishes=array_sum(array_column($s['rows'],'finishes'));
+?><!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Duo34 · Аналитика</title><style>
+body{margin:0;background:#16191f;color:#eee;font:16px/1.5 system-ui}main{max-width:1200px;margin:auto;padding:32px 20px}h1{margin-bottom:4px}p,small{color:#b6bdca}.cards{display:flex;gap:16px;flex-wrap:wrap;margin:24px 0}.card{padding:20px;background:#222832;border-radius:14px;flex:1;min-width:140px}.card b{display:block;font-size:32px;color:#b3e67c}.table{overflow:auto;border:1px solid #353d49;border-radius:12px;margin-bottom:28px}table{border-collapse:collapse;width:100%;white-space:nowrap}th,td{padding:12px 16px;text-align:left;border-bottom:1px solid #353d49}th{background:#222832}a{color:#b3e67c}code{font-size:12px}h2{margin-top:32px}
+</style><main><h1>Аналитика Duo34</h1><p>Обновлено <?=h(gmdate('d.m.Y H:i'))?> UTC · <a href="stats.php">Обновить</a> · <a href="./">К приложению</a></p>
+<div class="cards"><div class="card"><b><?=count($s['users'])?></b>браузеров</div><div class="card"><b><?=$s['visits']?></b>открытий приложения</div><div class="card"><b><?=$allFinishes?></b>завершений после запуска аналитики</div><div class="card"><b><?=array_sum(array_column($s['rows'],'legacy'))?></b>старых прохождений импортировано</div></div>
+<p>Один пользователь может пользоваться несколькими браузерами. Очистка данных браузера создаёт новый ID. Завершения включают повторные прохождения. Старый прогресс учитывается отдельно, без предположений о дате прохождения.</p>
+<?php foreach(['lesson'=>'Уроки','story'=>'Истории'] as $kind=>$title):?><h2><?=$title?></h2><div class="table"><table><thead><tr><th>Название</th><th>Начато</th><th>Завершено</th><th>Доля завершений</th><th>Браузеров завершили</th><th>Старый прогресс</th><th>Всего браузеров</th></tr></thead><tbody>
+<?php foreach($s['rows'] as $key=>$r):if(!str_starts_with($key,$kind.':'))continue;?><tr><td><?=h($r['title'])?></td><td><?=$r['starts']?></td><td><?=$r['finishes']?></td><td><?=$r['starts']?round(100*$r['matched']/$r['starts']).'%':'—'?></td><td><?=$r['learners']?></td><td><?=$r['legacy']?></td><td><?=$r['known']?></td></tr><?php endforeach;?></tbody></table></div><?php endforeach;?>
+<p>Доля завершений — завершённые попытки среди зарегистрированных начал за всё время; продолжение занятия, начатого раньше запуска аналитики, также считается началом. «Всего браузеров» — браузеры с завершением или старым сохранением, без двойного счёта.</p>
+<h2>По браузерам</h2><p>Уникальные пройденные уроки и истории, включая импортированный прогресс. Последние 200 активных браузеров.</p><div class="table"><table><tr><th>ID браузера</th><th>Последняя активность, UTC</th><th>Уроков / 9</th><th>Историй / 5</th><th>Завершений новых попыток</th></tr>
+<?php foreach(array_slice($s['users'],0,200) as $u):?><tr><td><code><?=h($u['id'])?></code></td><td><?=h($u['last'])?></td><td><?=$u['lessons']?></td><td><?=$u['stories']?></td><td><?=$u['finishes']?></td></tr><?php endforeach;?></table></div><?php if(!$s['users']):?><p>Пока событий нет. Данные появятся после открытия приложения пользователями.</p><?php endif;?></main></html>

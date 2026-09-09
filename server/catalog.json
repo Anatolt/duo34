@@ -1,0 +1,58 @@
+{
+  "lesson:lesson-1": {
+    "title": "Без паники",
+    "total": 8
+  },
+  "lesson:lesson-2": {
+    "title": "Одно слово — много смыслов",
+    "total": 8
+  },
+  "lesson:lesson-3": {
+    "title": "Не путай оттенки",
+    "total": 8
+  },
+  "lesson:lesson-4": {
+    "title": "Это было свидание?",
+    "total": 8
+  },
+  "lesson:lesson-5": {
+    "title": "Статус: сложно",
+    "total": 8
+  },
+  "lesson:lesson-6": {
+    "title": "Намёк или просто фраза?",
+    "total": 8
+  },
+  "lesson:lesson-7": {
+    "title": "Ложные друзья",
+    "total": 8
+  },
+  "lesson:lesson-8": {
+    "title": "Сказать иначе",
+    "total": 8
+  },
+  "lesson:lesson-9": {
+    "title": "Читать между строк",
+    "total": 8
+  },
+  "story:dad": {
+    "title": "Батя, выражайся точнее",
+    "total": 4
+  },
+  "story:change-mind": {
+    "title": "Можно передумать",
+    "total": 4
+  },
+  "story:compliment": {
+    "title": "Это комплимент, идиот",
+    "total": 4
+  },
+  "story:netflix": {
+    "title": "Netflix — это Netflix",
+    "total": 4
+  },
+  "story:translator": {
+    "title": "Слишком честный переводчик",
+    "total": 4
+  }
+}
