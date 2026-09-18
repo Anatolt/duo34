@@ -1,0 +1,7 @@
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export function promptMarkup(en,ru,id,tag='h2',langs={source:'en',target:'ru'}){
+ return `<div class="question-prompt"><${tag} tabindex="-1" lang="${esc(langs.source||'en')}" data-language-role="study">${esc(en)}</${tag}><details class="translation" data-translation-id="${esc(id)}"><summary data-language-role="ui">${esc(langs.summary||'Перевод')}</summary><p lang="${esc(langs.target||'ru')}" data-language-role="translation">${esc(ru)}</p></details></div>`;
+}
+export function choiceCard({id,en,ru,index,action,attribute,value,answered,selected=false,good=false,bad=false,sourceLang='en',targetLang='ru',translateLabel='Перевод',translateSrLabel=' варианта'}){
+ return `<div class="answer-card ${selected?'selected':''} ${good?'good':''} ${bad?'bad':''}"><button class="answer" data-action="${action}" data-${attribute}="${value}" ${answered?'disabled':''} aria-pressed="${selected}"><span class="key" aria-hidden="true">${index+1}</span><span lang="${esc(sourceLang)}" data-language-role="study">${esc(en)}</span></button><button class="choice-translate" data-action="translation-toggle" aria-expanded="false" aria-controls="${esc(id)}" data-language-role="ui">${esc(translateLabel)}<span class="sr-only">${esc(translateSrLabel)} ${index+1}</span></button><p class="choice-translation" id="${esc(id)}" lang="${esc(targetLang)}" data-language-role="translation" hidden>${esc(ru)}</p></div>`;
+}
