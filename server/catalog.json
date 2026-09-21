@@ -54,5 +54,21 @@
   "story:translator": {
     "title": "Слишком честный переводчик",
     "total": 4
+  },
+  "story:hot-mic": {
+    "title": "Микрофон, сука",
+    "total": 4
+  },
+  "story:dad-dating": {
+    "title": "Батя в Тиндере",
+    "total": 4
+  },
+  "story:return-hoodie": {
+    "title": "Верни худи и определись",
+    "total": 4
+  },
+  "story:size-isnt-the-point": {
+    "title": "Размер не главное",
+    "total": 4
   }
 }

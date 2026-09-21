@@ -1,3 +1,6 @@
 import {storyData} from './content.generated.js';
-export const {cast,stories}=storyData;
+import {newStories} from './stories-new.js';
+import {applyExplicitLocaleMigration} from './story-content-locales.js';
+export const cast=storyData.cast;
+export const stories=applyExplicitLocaleMigration([...newStories,...storyData.stories]);
 export const storyById=Object.fromEntries(stories.map(s=>[s.id,s]));

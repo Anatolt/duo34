@@ -8,3 +8,7 @@ node_modules/
 .analytics-access.txt
 .playwright-cli/
 outputs/
+output/
+tmp/
+archive/
+ops/__pycache__/

@@ -1,13 +1,34 @@
-// Only revealed dialogue may be replayed; unanswered choices stay silent.
-export function revealedClip(story, progress, manifest, index = progress?.index) {
+import {optionText, textFor} from './story-languages.js';
+
+export const spokenStoryLanguages = ['en', 'ru', 'es', 'zh', 'uk', 'ja'];
+export function supportsStoryAudio(story, lang) {
+  return spokenStoryLanguages.includes(lang) && story?.i18n?.[lang] === true;
+}
+export function supportsNodeAudio(story,node,lang){
+  if(!supportsStoryAudio(story,lang))return false;
+  if(node?.type!=='scene')return true;
+  return !!node.i18n?.line?.[lang];
+}
+export function storyAudioKey(story, index, lang = 'en') {
+  return lang === 'en' ? `${story.id}:${index}` : `${lang}:${story.id}:${index}`;
+}
+
+// Only revealed narration and dialogue may be replayed; unanswered choices stay silent.
+export function revealedClip(story, progress, manifest, index = progress?.index, lang = 'en') {
   if (!Number.isInteger(index) || index < 0 || index > progress?.index) return null;
   const node = story?.nodes[index];
-  if (!node || node.type === 'scene') return null;
+  if (!node) return null;
+  if (node.type === 'scene') {
+    const sceneText = node.i18n?.line?.[lang];
+    if (!sceneText) return null;
+  }
   if (node.type === 'choice' && progress.answers[index] === undefined) return null;
-  const text = node.type === 'line' ? node.en : node.options[node.correct];
-  const key = `${story.id}:${index}`;
+  const text = node.type === 'choice' ? optionText(node, node.correct, lang) : textFor(node, 'line', lang);
+  if (!text) return null;
+  const who = node.type === 'scene' ? 'narrator' : node.who;
+  const key = storyAudioKey(story, index, lang);
   const clip = manifest.clips?.[key];
-  return {key, text, who: node.who, src: clip?.text === text && clip?.who === node.who ? clip.src : null};
+  return {key, text, who, lang, src: clip?.text === text && clip?.who === who ? clip.src : null};
 }
 
 export const currentClip = revealedClip;
