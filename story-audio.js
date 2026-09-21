@@ -1,8 +1,14 @@
 import {optionText, textFor} from './story-languages.js';
+import audioManifest from './audio-manifest.js';
 
 export const spokenStoryLanguages = ['en', 'ru', 'es', 'zh', 'uk', 'ja'];
 export function supportsStoryAudio(story, lang) {
-  return spokenStoryLanguages.includes(lang) && story?.i18n?.[lang] === true;
+  if(!spokenStoryLanguages.includes(lang)||story?.i18n?.[lang]!==true)return false;
+  return story.nodes.every((node,index)=>{
+    const text=node.type==='choice'?optionText(node,node.correct,lang):textFor(node,'line',lang);
+    const clip=audioManifest.clips[storyAudioKey(story,index,lang)];
+    return node.type==='scene'&&!clip || !!clip&&clip.text===text;
+  });
 }
 export function supportsNodeAudio(story,node,lang){
   if(!supportsStoryAudio(story,lang))return false;

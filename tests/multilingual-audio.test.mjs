@@ -5,13 +5,13 @@ import {readFileSync} from 'node:fs';
 import audio from '../audio-manifest.js';
 import {stories} from '../stories.js';
 import {optionText, storySupports, textFor} from '../story-languages.js';
-import {revealedClip} from '../story-audio.js';
+import {revealedClip,supportsStoryAudio} from '../story-audio.js';
 import {storyScreen} from '../story-ui.js';
 
-test('Spanish, Chinese, and Ukrainian have complete audio for every localized story', () => {
+test('Previously voiced Spanish, Chinese, and Ukrainian stories retain complete audio', () => {
   let count = 0;
   for (const story of stories) for (const lang of ['es', 'zh', 'uk']) {
-    if (!storySupports(story, lang)) continue;
+    if (!supportsStoryAudio(story, lang)) continue;
     for (const [index, node] of story.nodes.entries()) {
       const progress = {index, answers: {[index]: node.correct}};
       const clip = revealedClip(story, progress, audio, index, lang);

@@ -49,7 +49,7 @@ test('Size story is complete in Russian, English, and Spanish only',()=>{
   assert.equal(story.i18n.zh,undefined);
   assert.equal(story.i18n.uk,undefined);
   assert.equal(story.nodes.filter(n=>n.type==='choice').length,4);
-  assert.deepEqual(availableStories(stories,'es','ru').map(s=>s.id),['hot-mic','dad-dating','size-isnt-the-point']);
+  assert.deepEqual(availableStories(stories,'es','ru').map(s=>s.id),stories.map(s=>s.id));
   assert.ok(story.ending.en.includes('lived happily'));
   assert.ok(story.ending.ru.includes('жили долго, счастливо'));
 });

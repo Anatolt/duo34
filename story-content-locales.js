@@ -1,4 +1,5 @@
 import {japaneseStoryLocales} from './story-content-ja.generated.js';
+import {spanishStoryLocales} from './story-content-es.js';
 
 // Explicit migration data for legacy fields that were Russian-only. Keeping it
 // separate makes missing locale data visible instead of hiding it in a runtime
@@ -100,6 +101,26 @@ export function applyExplicitLocaleMigration(stories) {
         node.i18n.options={...node.i18n.options,en:node.i18n.options?.en||node.options,ru:node.i18n.options?.ru||node.optionsRu};
         node.i18n.note={...node.i18n.note,ru:node.i18n.note?.ru||node.note};
       }
+    }
+
+    const es=spanishStoryLocales[story.id];
+    if(es){
+      if(es.nodes.length!==story.nodes.length)throw Error(`Spanish node count mismatch: ${story.id}`);
+      story.i18n.es=true;
+      for(const field of ['title','subtitle','place','topic','ending'])
+        story.i18n[field]={...story.i18n[field],es:es.story[field]};
+      es.nodes.forEach((localized,index)=>{
+        const node=story.nodes[index];
+        if(node.type==='choice'){
+          if(!localized||typeof localized!=='object'||localized.options?.length!==node.options.length)
+            throw Error(`Spanish choice mismatch: ${story.id}:${index}`);
+          for(const field of ['prompt','options','note'])
+            node.i18n[field]={...node.i18n[field],es:localized[field]};
+        }else{
+          if(typeof localized!=='string')throw Error(`Spanish line mismatch: ${story.id}:${index}`);
+          node.i18n.line={...node.i18n.line,es:localized};
+        }
+      });
     }
 
     const ja=japaneseStoryLocales[story.id];

@@ -20,7 +20,7 @@ test('Language-pair story links accept valid pairs and reject same, unknown, and
  assert.deepEqual(parseRoute(hash,storyById),{view:'story',id:'hot-mic',langs:valid,hash,explicitPair:true});
  assert.deepEqual(parseRoute('#/story/dad/ru/en',storyById,{source:'zh',target:'uk'}),{view:'story',id:'dad',langs:{source:'ru',target:'en'},hash:'#/story/dad/ru/en',explicitPair:true});
  assert.equal(parseRoute('#/stories/es/ru',storyById).hash,'#/stories/es/ru');
- for(const invalid of ['#/story/dad/en/en','#/story/dad/xx/ru','#/story/dad/en/xx','#/story/dad/es/en','#/story/dad/en/es']){
+ for(const invalid of ['#/story/dad/en/en','#/story/dad/xx/ru','#/story/dad/en/xx']){
   assert.deepEqual(parseRoute(invalid,storyById),{view:'stories',langs:{source:'ru',target:'en'},hash:'#/stories/ru/en',explicitPair:false},invalid);
  }
 });
