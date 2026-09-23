@@ -53,13 +53,13 @@ test('Spanish story availability does not change independent interface or explan
   assert.equal(availableStories(stories,langs.study,langs.translation).length,9);
 });
 
-test('unvoiced new Spanish stories remain readable without unusable audio controls',()=>{
+test('new Spanish stories expose complete playable audio controls',()=>{
   for(const id of added){
     const story=storyById[id];
-    assert.equal(supportsStoryAudio(story,'es'),false,id);
+    assert.equal(supportsStoryAudio(story,'es'),true,id);
     const html=storyScreen({storyProgress:{[id]:{index:1,answers:{}}}},id,{source:'es',target:'en',ui:'es',pedagogy:'es'});
     assert.match(html,/data-study-lang="es"/);
-    assert.doesNotMatch(html,/class="audio-controls"/);
-    assert.doesNotMatch(html,/data-clip-key="es:/);
+    assert.match(html,/class="audio-controls"/);
+    assert.match(html,new RegExp(`data-clip-key="es:${id}:1"`));
   }
 });

@@ -8,7 +8,7 @@ import {optionText, storySupports, textFor} from '../story-languages.js';
 import {revealedClip,supportsStoryAudio} from '../story-audio.js';
 import {storyScreen} from '../story-ui.js';
 
-test('Previously voiced Spanish, Chinese, and Ukrainian stories retain complete audio', () => {
+test('Spanish, Chinese, and Ukrainian stories expose complete audio where supported', () => {
   let count = 0;
   for (const story of stories) for (const lang of ['es', 'zh', 'uk']) {
     if (!supportsStoryAudio(story, lang)) continue;
@@ -28,7 +28,18 @@ test('Previously voiced Spanish, Chinese, and Ukrainian stories retain complete 
     assert.ok(html.includes(`data-clip-key="${lang}:${story.id}:1"`));
     assert.ok(html.includes('OpenAI TTS'));
   }
-  assert.equal(count, 155);
+  assert.equal(count, 273);
+});
+
+test('six newly voiced Spanish stories use the pinned Piper model and both voices',()=>{
+  const ids=new Set(['return-hoodie','dad','change-mind','compliment','netflix','translator']);
+  const clips=Object.entries(audio.clips).filter(([key])=>key.startsWith('es:')&&ids.has(key.split(':')[1]));
+  assert.equal(clips.length,118);
+  assert.deepEqual(new Set(clips.map(([,clip])=>clip.provider)),new Set(['Piper']));
+  assert.deepEqual(new Set(clips.map(([,clip])=>clip.model)),new Set(['piper-tts-1.8.0']));
+  assert.deepEqual(new Set(clips.map(([,clip])=>clip.voice)),new Set([
+    'es_ES-sharvard-medium:F','es_ES-sharvard-medium:M'
+  ]));
 });
 
 test('Russian has complete AI audio for all nine stories', () => {
